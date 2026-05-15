@@ -3,24 +3,29 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>打砖块 Breakout</title>
+    <title>打砖块 · 霓虹突破</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+    <div id="scanlines"></div>
+    <div id="stars"></div>
     <div id="gameContainer">
-        <h1>🧱 打砖块</h1>
+        <h1>◆ 霓虹突破 <span class="sub">NEON BREAK</span></h1>
         <div id="ui">
-            <span>🏆 得分: <span id="score">0</span></span>
-            <span>❤️ 生命: <span id="lives">3</span></span>
-            <span>🏁 关卡: <span id="level">1</span></span>
+            <span class="ui-score">🏆 <span id="score">0</span></span>
+            <span class="ui-level"><span class="label">关卡</span> <span id="level">1</span></span>
+            <span class="ui-lives"><span class="label">生命</span> <span id="lives">3</span></span>
         </div>
         <canvas id="gameCanvas" width="800" height="600"></canvas>
         <div id="controls">
-            <button id="startBtn">开始游戏</button>
-            <button id="pauseBtn" disabled>暂停</button>
+            <button id="startBtn"><span>▶ 开始游戏</span></button>
+            <button id="pauseBtn" disabled><span>⏸ 暂停</span></button>
         </div>
-        <p id="tip">← → 或 A/D 移动挡板，空格键发射球 / 暂停</p>
+        <p id="tip">← → / A D 移动 ｜ 空格 发射 / 暂停</p>
     </div>
+    <div id="scanlines-bot"></div>
     <script src="game.js"></script>
 </body>
 </html>
