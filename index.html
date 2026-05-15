@@ -19,13 +19,20 @@
             <span class="ui-lives"><span class="label">生命</span> <span id="lives">3</span></span>
         </div>
         <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="difficulty">
+            <span class="diff-label">难度</span>
+            <button class="diff-btn active" data-diff="0"><span>简单</span></button>
+            <button class="diff-btn" data-diff="1"><span>普通</span></button>
+            <button class="diff-btn" data-diff="2"><span>困难</span></button>
+        </div>
         <div id="controls">
             <button id="startBtn"><span>▶ 开始游戏</span></button>
             <button id="pauseBtn" disabled><span>⏸ 暂停</span></button>
         </div>
-        <p id="tip">← → / A D 移动 ｜ 空格 发射 / 暂停</p>
+        <p id="tip">← → / A D 移动 ｜ 空格 发射 / 暂停 ｜ 手机触摸左右滑动</p>
     </div>
     <div id="scanlines-bot"></div>
+    <div id="touchHint"></div>
     <script src="game.js"></script>
 </body>
 </html>
