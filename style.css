@@ -360,3 +360,50 @@ button:disabled {
     color: rgba(255,255,255,0.15);
     margin-top: 4px;
 }
+
+/* ---------- 手机端左右按钮 ---------- */
+#mobileControls {
+    display: none;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 6px;
+}
+
+#mobileControls button {
+    width: 56px;
+    height: 48px;
+    padding: 0;
+    font-size: 18px;
+    border-radius: 12px;
+    background: rgba(0,240,255,0.06);
+    border: 1px solid rgba(0,240,255,0.12);
+    color: var(--cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+#mobileControls button:active {
+    background: rgba(0,240,255,0.15);
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(0,240,255,0.2);
+}
+
+#btnLaunch {
+    width: 56px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.3);
+    border-color: rgba(255,255,255,0.08);
+}
+
+#btnLaunch:active {
+    background: rgba(255,255,255,0.1);
+    border-color: rgba(255,255,255,0.2);
+}
+
+@media (max-width: 880px) {
+    #mobileControls { display: flex; }
+}

@@ -767,6 +767,24 @@ pauseBtn.addEventListener('click',togglePause);
 diffBtns.forEach((btn,i)=>btn.addEventListener('click',()=>{if(state===STATE.MENU)setDiff(i)}));
 diffBtns.forEach((btn,i)=>btn.addEventListener('touchstart',e=>{e.preventDefault();if(state===STATE.MENU)setDiff(i)}));
 
+/* ---------- 手机端左右按钮 ---------- */
+const btnLeft=document.getElementById('btnLeft');
+const btnRight=document.getElementById('btnRight');
+const btnLaunch=document.getElementById('btnLaunch');
+function setMobileKey(btn,key){
+    btn.addEventListener('touchstart',e=>{e.preventDefault();keys[key]=true});
+    btn.addEventListener('touchend',e=>{e.preventDefault();keys[key]=false});
+    btn.addEventListener('touchcancel',e=>{keys[key]=false});
+}
+setMobileKey(btnLeft,'left');
+setMobileKey(btnRight,'right');
+btnLaunch.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    if(state===STATE.MENU||state===STATE.GAMEOVER||state===STATE.WIN)startGame();
+    else if(state===STATE.PAUSED)togglePause();
+    else if(state===STATE.PLAYING&&balls.some(b=>b.stuck))launchBall();
+});
+
 /* ---------- 触摸控制 ---------- */
 canvas.addEventListener('touchstart',e=>{
     e.preventDefault();
