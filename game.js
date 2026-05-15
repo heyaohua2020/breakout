@@ -19,7 +19,7 @@ const paddle={x:0,y:570,w:120,h:14,defaultW:120,speed:8,color:'#4fc3f7'};
 let balls=[],score=0,lives=3,level=1,bricks=[],particles=[];
 let comboCount=0,lastComboTime=0,animFrameId=null;
 const keys={left:false,right:false};
-let mouseX=null;
+
 
 /* ---------- 屏幕震动 ---------- */
 let shakeTime=0,shakeIntensity=0;
@@ -196,7 +196,6 @@ function update(){
     if(state!==STATE.PLAYING)return;
     if(keys.left)paddle.x-=paddle.speed;
     if(keys.right)paddle.x+=paddle.speed;
-    if(mouseX!==null&&!keys.left&&!keys.right){const t=mouseX-paddle.w/2,d=t-paddle.x;if(Math.abs(d)>2)paddle.x+=Math.sign(d)*Math.min(Math.abs(d),paddle.speed*1.2);else paddle.x=t}
     paddle.x=Math.max(0,Math.min(W-paddle.w,paddle.x));
     for(let i=balls.length-1;i>=0;i--){
         const b=balls[i];
@@ -268,7 +267,7 @@ function draw(){
         ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='16px sans-serif';ctx.fillText('Breakout Game',W/2,210);
         // 操作提示
         ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='15px sans-serif';ctx.fillText('← → / A D  移动挡板',W/2,300);
-        ctx.fillStyle='rgba(255,255,255,0.35)';ctx.font='14px sans-serif';ctx.fillText('鼠标也可控制  |  空格键 发射/暂停',W/2,328);
+        ctx.fillStyle='rgba(255,255,255,0.35)';ctx.font='14px sans-serif';ctx.fillText('空格键 发射/暂停',W/2,328);
         // 最高分
         drawScores(W/2-40,370);
         // 开始按钮闪光提示
@@ -308,16 +307,6 @@ function launchBall(){if(state!==STATE.PLAYING||balls.length===0)return;for(cons
 /* ---------- 事件 ---------- */
 window.addEventListener('keydown',e=>{switch(e.code){case'ArrowLeft':case'KeyA':keys.left=true;e.preventDefault();break;case'ArrowRight':case'KeyD':keys.right=true;e.preventDefault();break;case'Space':e.preventDefault();if(state===STATE.MENU)startGame();else if(state===STATE.PLAYING&&balls.some(b=>b.stuck))launchBall();else if(state===STATE.PLAYING||state===STATE.PAUSED)togglePause();else if(state===STATE.GAMEOVER||state===STATE.WIN)startGame();break}});
 window.addEventListener('keyup',e=>{switch(e.code){case'ArrowLeft':case'KeyA':keys.left=false;e.preventDefault();break;case'ArrowRight':case'KeyD':keys.right=false;e.preventDefault();break}});
-
-// 鼠标
-canvas.addEventListener('mousemove',e=>{const r=canvas.getBoundingClientRect();mouseX=(e.clientX-r.left)*(canvas.width/r.width)});
-canvas.addEventListener('mouseleave',()=>{mouseX=null});
-canvas.addEventListener('click',()=>{if(state===STATE.MENU)startGame();else if(state===STATE.PLAYING&&balls.some(b=>b.stuck))launchBall();else if(state===STATE.GAMEOVER||state===STATE.WIN)startGame()});
-
-// 触屏支持
-canvas.addEventListener('touchstart',e=>{e.preventDefault();const t=e.touches[0],r=canvas.getBoundingClientRect();mouseX=(t.clientX-r.left)*(canvas.width/r.width);if(state===STATE.MENU)startGame();else if(state===STATE.PLAYING&&balls.some(b=>b.stuck))launchBall();else if(state===STATE.GAMEOVER||state===STATE.WIN)startGame()},{passive:false});
-canvas.addEventListener('touchmove',e=>{e.preventDefault();const t=e.touches[0],r=canvas.getBoundingClientRect();mouseX=(t.clientX-r.left)*(canvas.width/r.width)},{passive:false});
-canvas.addEventListener('touchend',e=>{e.preventDefault();mouseX=null},{passive:false});
 
 startBtn.addEventListener('click',startGame);
 pauseBtn.addEventListener('click',togglePause);
