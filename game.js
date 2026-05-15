@@ -765,6 +765,7 @@ window.addEventListener('keyup',e=>{switch(e.code){case'ArrowLeft':case'KeyA':ke
 startBtn.addEventListener('click',startGame);
 pauseBtn.addEventListener('click',togglePause);
 diffBtns.forEach((btn,i)=>btn.addEventListener('click',()=>{if(state===STATE.MENU)setDiff(i)}));
+diffBtns.forEach((btn,i)=>btn.addEventListener('touchstart',e=>{e.preventDefault();if(state===STATE.MENU)setDiff(i)}));
 
 /* ---------- 触摸控制 ---------- */
 canvas.addEventListener('touchstart',e=>{
@@ -793,5 +794,5 @@ canvas.addEventListener('touchend',e=>{e.preventDefault();keys.left=false;keys.r
 canvas.addEventListener('touchcancel',e=>{keys.left=false;keys.right=false});
 
 /* ---------- 启动 ---------- */
-setDiff(DIFF.HARD);
+setDiff(DIFF.NORMAL);
 resetGame();gameLoop();
