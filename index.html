@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>打砖块 Breakout</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <div id="gameContainer">
+        <h1>🧱 打砖块</h1>
+        <div id="ui">
+            <span>🏆 得分: <span id="score">0</span></span>
+            <span>❤️ 生命: <span id="lives">3</span></span>
+            <span>🏁 关卡: <span id="level">1</span></span>
+        </div>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="controls">
+            <button id="startBtn">开始游戏</button>
+            <button id="pauseBtn" disabled>暂停</button>
+        </div>
+        <p id="tip">← → 或 A/D 移动挡板，空格键发射球 / 暂停</p>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>

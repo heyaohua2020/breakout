@@ -1,0 +1,139 @@
+/* ============================================
+     打砖块 Breakout — 样式
+     ============================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(145deg, #0b0e1a 0%, #1a1f2f 50%, #0f121e 100%);
+    font-family: 'Segoe UI', 'PingFang SC', Roboto, Helvetica, Arial, sans-serif;
+    color: #e0e4f0;
+}
+
+/* ---------- 主容器 ---------- */
+#gameContainer {
+    background: rgba(22, 28, 46, 0.85);
+    backdrop-filter: blur(8px);
+    border-radius: 24px;
+    padding: 28px 36px 32px;
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    max-width: 880px;
+    width: fit-content;
+}
+
+h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 14px;
+    text-shadow: 0 0 40px rgba(255, 210, 0, 0.15);
+}
+
+/* ---------- 信息栏 ---------- */
+#ui {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    margin-bottom: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 600;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+#ui span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+#score { color: #ffd700; }
+#lives { color: #ff6b6b; }
+#level { color: #69db7c; }
+
+/* ---------- 画布 ---------- */
+#gameCanvas {
+    display: block;
+    margin: 0 auto;
+    border-radius: 16px;
+    background: #0f1322;
+    box-shadow:
+        inset 0 0 60px rgba(0, 0, 0, 0.5),
+        0 8px 32px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    cursor: none;
+    width: 800px;
+    height: 600px;
+}
+
+/* ---------- 按钮 ---------- */
+#controls {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin: 16px 0 10px;
+}
+
+button {
+    padding: 10px 32px;
+    border: none;
+    border-radius: 40px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 1px;
+}
+
+#startBtn {
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+    color: #1a1a2e;
+    box-shadow: 0 4px 16px rgba(255, 210, 0, 0.3);
+}
+
+#startBtn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 24px rgba(255, 210, 0, 0.45);
+}
+
+#pauseBtn {
+    background: rgba(255, 255, 255, 0.08);
+    color: #b0b8d0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#pauseBtn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+/* ---------- 提示 ---------- */
+#tip {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.25);
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+}

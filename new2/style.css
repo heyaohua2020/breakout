@@ -1,0 +1,168 @@
+/* 五子棋游戏样式 */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Microsoft YaHei', Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 2.5em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f0f0f0;
+  border-radius: 10px;
+}
+
+.game-info span {
+  font-size: 1.1em;
+  color: #555;
+}
+
+.game-info select {
+  padding: 5px 10px;
+  border: 2px solid #667eea;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.canvas-container {
+  display: inline-block;
+  padding: 20px;
+  background: #DEB887;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+}
+
+#gameCanvas {
+  border-radius: 5px;
+  cursor: crosshair;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.controls {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.controls button {
+  padding: 12px 30px;
+  font-size: 1.1em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: bold;
+}
+
+#undoBtn {
+  background: #6c757d;
+  color: white;
+}
+
+#undoBtn:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#restartBtn {
+  background: #dc3545;
+  color: white;
+}
+
+#restartBtn:hover {
+  background: #c82333;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#status {
+  padding: 15px 25px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  font-size: 1.2em;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#status button {
+  padding: 8px 20px;
+  font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#status #undoBtn {
+  background: #6c757d;
+  color: white;
+}
+
+#status #restartBtn {
+  background: #dc3545;
+  color: white;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+  
+  h1 {
+    font-size: 1.8em;
+  }
+  
+  .game-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  #gameCanvas {
+    transform: scale(0.8);
+  }
+  
+  .controls {
+    flex-direction: column;
+  }
+  
+  .controls button {
+    padding: 10px 20px;
+  }
+}
