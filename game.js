@@ -64,6 +64,35 @@ const PU=[
 ];
 let powerups=[],activeEffects={};
 
+/* ---------- BGM ---------- */
+const bgm={
+    ctx:null,loopId:null,on:false,idx:-1,melodies:[
+        // 0: C大调舒缓
+        {seq:[[262,0.25],[294,0.25],[330,0.25],[392,0.5],[349,0.25],[330,0.25],[294,0.25],[262,0.5],[294,0.25],[349,0.25],[440,0.25],[523,0.5],[440,0.25],[349,0.25],[294,0.25],[262,0.5]],bass:[[131,0.5],[131,0.5],[175,0.5],[175,0.5],[165,0.5],[165,0.5],[131,0.5],[131,0.5]],dur:4400},
+        // 1: G大调柔和
+        {seq:[[294,0.25],[330,0.25],[392,0.25],[523,0.5],[494,0.25],[440,0.25],[392,0.25],[294,0.5],[330,0.25],[392,0.25],[523,0.25],[587,0.5],[523,0.25],[392,0.25],[330,0.25],[294,0.5]],bass:[[147,0.5],[147,0.5],[196,0.5],[196,0.5],[175,0.5],[175,0.5],[165,0.5],[165,0.5]],dur:4400},
+        // 2: F大调悠扬
+        {seq:[[349,0.3],[392,0.3],[440,0.3],[523,0.6],[494,0.3],[440,0.3],[392,0.3],[349,0.6],[392,0.3],[440,0.3],[523,0.3],[659,0.6],[587,0.3],[523,0.3],[440,0.3],[349,0.6]],bass:[[175,0.6],[175,0.6],[220,0.6],[220,0.6],[196,0.6],[196,0.6],[175,0.6],[175,0.6]],dur:5200},
+        // 3: 五声音阶宁静
+        {seq:[[262,0.3],[294,0.3],[330,0.3],[523,0.6],[440,0.3],[392,0.3],[330,0.3],[262,0.6],[330,0.3],[392,0.3],[523,0.3],[659,0.6],[523,0.3],[392,0.3],[330,0.3],[262,0.6]],bass:[[131,0.6],[131,0.6],[165,0.6],[165,0.6],[175,0.6],[175,0.6],[165,0.6],[165,0.6]],dur:5200},
+    ],
+    _note(f,d,t){if(!this.ctx)return;const o=this.ctx.createOscillator(),g=this.ctx.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(0.07,this.ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.001,this.ctx.currentTime+t+d);o.connect(g);g.connect(this.ctx.destination);o.start(this.ctx.currentTime+t);o.stop(this.ctx.currentTime+t+d+0.05)},
+    _bass(f,d,t){if(!this.ctx)return;const o=this.ctx.createOscillator(),g=this.ctx.createGain();o.type='sine';o.frequency.value=f/2;g.gain.setValueAtTime(0.12,this.ctx.currentTime+t);g.gain.exponentialRampToValueAtTime(0.001,this.ctx.currentTime+t+d);o.connect(g);g.connect(this.ctx.destination);o.start(this.ctx.currentTime+t);o.stop(this.ctx.currentTime+t+d+0.05)},
+    _pick(){let i;do{i=Math.floor(Math.random()*this.melodies.length)}while(i===this.idx&&this.melodies.length>1);this.idx=i},
+    _play(){
+        if(!this.on)return;const m=this.melodies[this.idx],n=this.ctx.currentTime;let t=0;
+        for(let i=0;i<m.seq.length;i++){this._note(m.seq[i][0],m.seq[i][1],t);t+=m.seq[i][1]}
+        t=0;for(let i=0;i<m.bass.length;i++){this._bass(m.bass[i][0],m.bass[i][1],t);t+=m.bass[i][1]}
+        this.loopId=setTimeout(()=>this._play(),m.dur);
+    },
+    start(){
+        if(!sfx.ctx){sfx.init()}this.ctx=sfx.ctx;if(!this.ctx||this.on)return;this.on=true;
+        if(this.idx<0)this._pick();this._play();
+    },
+    switch(){if(!this.ctx||!this.on)return;this._pick();this.stop();this.on=true;this._play()},
+    stop(){this.on=false;if(this.loopId){clearTimeout(this.loopId);this.loopId=null}},
+};
+
 /* ---------- 音效 ---------- */
 const sfx={
     ctx:null,
@@ -92,7 +121,7 @@ const sfx={
 };
 
 /* ---------- 球 ---------- */
-function createBall(x,y,dx,dy,stuck=true){return{x,y,r:9,dx:dx||0,dy:dy||0,stuck,trail:[]}}
+function createBall(x,y,dx,dy,stuck=true){const a={x,y,r:15,dx:dx||0,dy:dy||0,stuck,trail:[]};a.aura=Array.from({length:10},(_,i)=>({angle:i/10*Math.PI*2+Math.random()*0.3,radius:22+Math.random()*8,size:2+Math.random()*2.5,speed:0.8+Math.random()*0.5,phase:Math.random()*Math.PI*2}));return a}
 function resetBall(stick=true){
     balls=[createBall(paddle.x+paddle.w/2,paddle.y-10)];
     const b=balls[0];b.stuck=stick;
@@ -134,7 +163,7 @@ function drawParticles(){for(const p of particles){ctx.globalAlpha=p.life;ctx.fi
 
 /* ---------- 道具逻辑 ---------- */
 function spawnPowerup(x,y){if(Math.random()>0.25)return;const t=PU[Math.floor(Math.random()*PU.length)];powerups.push({x,y,type:t,vy:2,wobble:0,wobbleSpeed:2+Math.random()*2});}
-function updatePowerups(){for(let i=powerups.length-1;i>=0;i--){const p=powerups[i];p.y+=p.vy;p.wobble+=p.wobbleSpeed;p.x+=Math.sin(p.wobble*0.05)*0.3;if(p.y+12>=paddle.y&&p.y-12<=paddle.y+paddle.h&&p.x>=paddle.x&&p.x<=paddle.x+paddle.w){activateEffect(p.type);powerups.splice(i,1);continue}if(p.y>H+20)powerups.splice(i,1);}}
+function updatePowerups(){for(let i=powerups.length-1;i>=0;i--){const p=powerups[i];p.y+=p.vy;p.wobble+=p.wobbleSpeed;p.x+=Math.sin(p.wobble*0.05)*0.3;if(p.y+14>=paddle.y&&p.y-14<=paddle.y+paddle.h&&p.x>=paddle.x-4&&p.x<=paddle.x+paddle.w+4){activateEffect(p.type);powerups.splice(i,1);continue}if(p.y>H+20)powerups.splice(i,1);}}
 function drawPowerups(){for(const p of powerups){const cx=p.x,cy=p.y;ctx.shadowColor=p.type.color;ctx.shadowBlur=15;const g=ctx.createRadialGradient(cx-3,cy-3,2,cx,cy,14);g.addColorStop(0,'#fff');g.addColorStop(0.3,p.type.color);g.addColorStop(1,darkenColor(p.type.color,0.4));ctx.fillStyle=g;ctx.beginPath();ctx.arc(cx,cy,14,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#fff';ctx.font='bold 16px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(p.type.id,cx,cy+1);}}
 function activateEffect(t){
     sfx.play('powerup');
@@ -248,12 +277,13 @@ function update(){
     }
     if(balls.length===0){
         triggerShake(5,200);sfx.play('lose');lives--;comboCount=0;updateUI();
-        if(lives<=0){triggerShake(6,400);sfx.play('gameover');addScore(score);state=STATE.GAMEOVER;return}
+        if(lives<=0){triggerShake(6,400);sfx.play('gameover');bgm.stop();addScore(score);state=STATE.GAMEOVER;return}
         resetBall(true);return;
     }
     if(bricks.every(b=>!b.alive)){
         sfx.play('levelup');level++;levelEl.textContent=level;
-        if(level>10){addScore(score);state=STATE.WIN;return}
+        if(level>10){addScore(score);bgm.stop();state=STATE.WIN;return}
+        if(level%3===1&&level>1)bgm.switch();
         bricks=buildLevel(level);resetBall(true);lives=Math.min(lives+1,5);updateUI();
     }
     updatePowerups();updateActiveEffects();updateParticles();
@@ -284,11 +314,35 @@ function draw(){
         if(bk.frozen){ctx.fillStyle='rgba(255,255,255,0.25)';roundRect(ctx,bk.x,bk.y,bk.w,bk.h,3);ctx.fill();ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('❄',bk.x+bk.w/2,bk.y+bk.h/2+1)}
     }
     for(const b of balls){
-        const ib=activeEffects['I'],fb=activeEffects['B'];
-        for(let i=0;i<b.trail.length;i++){const t=b.trail[i];ctx.globalAlpha=(i+1)/b.trail.length*0.4;ctx.fillStyle=fb?'#ff4500':ib?'#00bcd4':'#ffd700';ctx.beginPath();ctx.arc(t.x,t.y,b.r*(0.4+0.6*(i+1)/b.trail.length),0,Math.PI*2);ctx.fill()}
+        let bn=8,fc='#d5d9df',fl='#f5f7fa',fd='#8a9099';
+        if(activeEffects['B']){bn=5;fc='#ff6a00';fl='#ffaa44';fd='#cc4400'}
+        else if(activeEffects['F']){bn=3;fc='#d32f2f';fl='#ff6659';fd='#9a0007'}
+        else if(activeEffects['I']){bn=2;fc='#0055cc';fl='#3388ee';fd='#003388'}
+        else if(activeEffects['E']){bn=6;fc='#388e3c';fl='#6abf69';fd='#00600f'}
+        else if(activeEffects['S']){bn=1;fc='#fbc02d';fl='#fff263';fd='#c49000'}
+        else if(activeEffects['G']){bn=4;fc='#7b1fa2';fl='#ae52d4';fd='#4a0072'}
+        // Trail
+        for(let i=0;i<b.trail.length;i++){const t=b.trail[i],p=(i+1)/b.trail.length;ctx.globalAlpha=p*0.35;ctx.fillStyle=i<b.trail.length-1?darkenColor(fc,1-p):fc;ctx.beginPath();ctx.arc(t.x,t.y,b.r*(0.3+0.7*p),0,Math.PI*2);ctx.fill()}
         ctx.globalAlpha=1;
-        const fc=fb?'#ff4500':ib?'#00bcd4':'#ffd700',fl=fb?'#fff5e6':ib?'#e0f7fa':'#fff8e1';
-        if(!b.stuck||state===STATE.MENU){const g=ctx.createRadialGradient(b.x-3,b.y-3,2,b.x,b.y,b.r);g.addColorStop(0,fl);g.addColorStop(0.4,fc);g.addColorStop(1,darkenColor(fc,0.4));ctx.fillStyle=g;ctx.shadowColor=fc;ctx.shadowBlur=20;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0}else if(Math.sin(Date.now()/200)>0){ctx.fillStyle=fc;ctx.shadowColor=fc;ctx.shadowBlur=20;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0}
+        if(!b.stuck||state===STATE.MENU){
+    // Glow
+    const gp=1+Math.sin(Date.now()/300)*0.08;ctx.shadowColor=fc;ctx.shadowBlur=25*gp;
+            // 3D sphere body
+            const g=ctx.createRadialGradient(b.x-4,b.y-4,1,b.x,b.y,b.r);
+            g.addColorStop(0,fl);g.addColorStop(0.35,fc);g.addColorStop(1,fd);
+            ctx.fillStyle=g;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();
+            ctx.shadowBlur=0;
+            // Pool ball label
+            ctx.fillStyle='rgba(255,255,255,0.92)';ctx.beginPath();ctx.arc(b.x,b.y,b.r*0.55,0,Math.PI*2);ctx.fill();
+            ctx.fillStyle='#222';ctx.font='bold 8px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(bn,b.x,b.y);
+            // Specular highlights
+            ctx.fillStyle='rgba(255,255,255,0.5)';ctx.beginPath();ctx.arc(b.x-3,b.y-3,3,0,Math.PI*2);ctx.fill();
+            ctx.fillStyle='rgba(255,255,255,0.2)';ctx.beginPath();ctx.arc(b.x-5,b.y-5,1.5,0,Math.PI*2);ctx.fill();
+            // Aura particles
+            const nt=Date.now()/1000;
+            for(const p of b.aura){const a=p.angle+nt*p.speed;ctx.globalAlpha=0.3+0.25*Math.sin(nt*2+p.phase);ctx.fillStyle=fl;ctx.beginPath();ctx.arc(b.x+Math.cos(a)*p.radius,b.y+Math.sin(a)*p.radius*0.6,p.size,0,Math.PI*2);ctx.fill()}
+            ctx.globalAlpha=1;
+        }else if(Math.sin(Date.now()/200)>0){ctx.globalAlpha=0.4+0.2*Math.sin(Date.now()/150);ctx.fillStyle=fc;ctx.shadowColor=fc;ctx.shadowBlur=20;ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.globalAlpha=1}
     }
     if(balls.length>0&&balls.every(b=>b.stuck)&&state===STATE.PLAYING){ctx.fillStyle='rgba(255,255,255,0.2)';ctx.font='14px sans-serif';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText('按 空格键 发射',W/2,20)}
     const pg=ctx.createLinearGradient(paddle.x,paddle.y,paddle.x,paddle.y+paddle.h);
@@ -344,8 +398,8 @@ function darkenColor(hex,f){const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.s
 function gameLoop(){update();draw();animFrameId=requestAnimationFrame(gameLoop)}
 
 /* ---------- 控制 ---------- */
-function startGame(){sfx.init();resetGame();state=STATE.PLAYING;startBtn.textContent='重新开始';pauseBtn.disabled=false;pauseBtn.textContent='暂停'}
-function togglePause(){if(state===STATE.PLAYING){state=STATE.PAUSED;pauseBtn.textContent='继续'}else if(state===STATE.PAUSED){state=STATE.PLAYING;pauseBtn.textContent='暂停'}}
+function startGame(){sfx.init();resetGame();state=STATE.PLAYING;startBtn.textContent='重新开始';pauseBtn.disabled=false;pauseBtn.textContent='暂停';bgm.start()}
+function togglePause(){if(state===STATE.PLAYING){state=STATE.PAUSED;pauseBtn.textContent='继续';bgm.stop()}else if(state===STATE.PAUSED){state=STATE.PLAYING;pauseBtn.textContent='暂停';bgm.start()}}
 function launchBall(){if(state!==STATE.PLAYING||balls.length===0)return;for(const b of balls){if(!b.stuck)continue;b.stuck=false;const s=5+(level-1)*0.3,a=-Math.PI/2+(Math.random()-0.5)*0.8;b.dx=Math.cos(a)*s;b.dy=Math.sin(a)*s;b.trail=[];if(activeEffects['S']){b.dx*=0.5;b.dy*=0.5}if(activeEffects['E']){b.dx*=1.6;b.dy*=1.6}}}
 
 /* ---------- 事件 ---------- */
