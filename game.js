@@ -766,6 +766,32 @@ startBtn.addEventListener('click',startGame);
 pauseBtn.addEventListener('click',togglePause);
 diffBtns.forEach((btn,i)=>btn.addEventListener('click',()=>{if(state===STATE.MENU)setDiff(i)}));
 
+/* ---------- 触摸控制 ---------- */
+canvas.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    const t=e.changedTouches[0];if(!t)return;
+    const rect=canvas.getBoundingClientRect();
+    const scaleX=W/rect.width;
+    const tx=(t.clientX-rect.left)*scaleX;
+    if(state===STATE.MENU||state===STATE.GAMEOVER||state===STATE.WIN){startGame();return}
+    if(state===STATE.PAUSED){togglePause();return}
+    if(state===STATE.PLAYING){
+        if(balls.some(b=>b.stuck))launchBall();
+        keys.left=tx<W/2;keys.right=tx>=W/2;
+    }
+});
+canvas.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    if(state!==STATE.PLAYING)return;
+    const t=e.changedTouches[0];if(!t)return;
+    const rect=canvas.getBoundingClientRect();
+    const scaleX=W/rect.width;
+    const tx=(t.clientX-rect.left)*scaleX;
+    keys.left=tx<W/2;keys.right=tx>=W/2;
+});
+canvas.addEventListener('touchend',e=>{e.preventDefault();keys.left=false;keys.right=false});
+canvas.addEventListener('touchcancel',e=>{keys.left=false;keys.right=false});
+
 /* ---------- 启动 ---------- */
 setDiff(DIFF.HARD);
 resetGame();gameLoop();

@@ -207,6 +207,7 @@ h1 .sub {
 
 /* ---------- 响应式 ---------- */
 @media (max-width: 880px) {
+    body { overflow: auto; align-items: flex-start; padding: 0; }
     #gameContainer {
         padding: 16px;
         border-radius: 0;
