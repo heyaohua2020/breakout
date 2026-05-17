@@ -19,7 +19,7 @@ let state=STATE.MENU;
 let transTimer=0,transAlpha=0;
 const paddle={x:0,y:570,w:120,h:14,defaultW:120,speed:8,color:'#00f0ff'};
 let balls=[],score=0,lives=3,level=1,bricks=[],particles=[];
-let comboCount=0,lastComboTime=0,animFrameId=null;
+let comboCount=0,lastComboTime=0,lastIceDrop=0,animFrameId=null;
 const keys={left:false,right:false};
 let scorePopups=[];
 let boss=null,bossBullets=[],bossShields=[],bossPhase=1,bossHitFlash=0,bossBGAlpha=0;
@@ -361,7 +361,7 @@ const BOSS_CFG=[
     {name:'VOIDMASTER',hp:60,color:'#00f0ff',glow:'#00f0ff',bulletInterval:1200,shields:4,speed:2.5,score:5000},
 ];
 function resetPaddle(){paddle.w=paddle.defaultW;paddle.x=(W-paddle.w)/2}
-function resetGame(){const c=DIFF_CFG[diff];score=0;lives=c.lives;level=1;paddle.defaultW=c.pw;comboCount=0;particles=[];powerups=[];scorePopups=[];boss=null;bossBullets=[];bossShields=[];activeEffects={};keys.left=false;keys.right=false;updateUI();resetPaddle();bricks=buildLevel(1);resetBall(true)}
+function resetGame(){const c=DIFF_CFG[diff];score=0;lives=c.lives;level=1;paddle.defaultW=c.pw;comboCount=0;lastIceDrop=0;particles=[];powerups=[];scorePopups=[];boss=null;bossBullets=[];bossShields=[];activeEffects={};keys.left=false;keys.right=false;updateUI();resetPaddle();bricks=buildLevel(1);resetBall(true)}
 function updateUI(){scoreEl.textContent=score;livesEl.textContent=lives;levelEl.textContent=level}
 
 /* ---------- 更新 ---------- */
@@ -407,6 +407,10 @@ function update(){
     // Brick flash timer
     for(const bk of bricks)if(bk.flashTime>0)bk.flashTime-=16;
     if(isBossLevel(level))updateBoss();
+    if(Date.now()-lastIceDrop>=12000&&bricks.some(b=>b.alive&&b.type===B.METAL)){
+        lastIceDrop=Date.now();const i=PU.find(p=>p.id==='I');
+        powerups.push({x:40+Math.random()*(W-80),y:-20,type:i,vy:2,wobble:0,wobbleSpeed:2+Math.random()*2});
+    }
     updatePowerups();updateActiveEffects();updateParticles();updateScorePopups();
 }
 
