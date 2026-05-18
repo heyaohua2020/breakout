@@ -1,0 +1,10 @@
+{
+  "name": "neon-break",
+  "private": true,
+  "scripts": {
+    "build": "javascript-obfuscator game.js --output game.min.js --compact true --control-flow-flattening true --control-flow-flattening-threshold 0.5 --dead-code-injection true --dead-code-injection-threshold 0.3 --string-array true --string-array-encoding base64 --string-array-threshold 0.5 --transform-object-keys true"
+  },
+  "devDependencies": {
+    "javascript-obfuscator": "^4.1.1"
+  }
+}
